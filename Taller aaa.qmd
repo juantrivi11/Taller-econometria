@@ -1,0 +1,144 @@
+---
+title: "Actividad Woodridge"
+author: "Valeria Garcia - Juan Triviño"
+format: html
+editor: visual
+---
+
+## Taller Econometria
+
+```{r}
+library(wooldridge)
+library(modelsummary)
+library(tidyverse)
+data("bwght")
+data("hprice1")
+```
+
+Valeria Garcia
+
+Juan Camilo Triviño
+
+# C3.1
+
+#### 1. ¿Cual es el signo más probable para 2?
+
+El signo mas probable es que sea positivo, ya que un aumento en el ingreso familiar podría significar mejore condiciones y cuidados y como consecuencia, un aumento en el peso al nacer.
+
+#### 2. ¿Cree que cigs y faminc estén correlacionados? Explique por qué la correlación puede ser positiva o negativa.
+
+En zonas con un alto costo de vida, las personas con ingresos más altos pueden tener mejor acceso a opciones de estilos de vida saludables y ser menos propensas a fumar. Sin embargo, en áreas donde fumar es más común entre las clases socioeconómicas más bajas, por lo tanto es mas probable que la correlación entre los cigs y el faminc sea negativa.
+
+```{r}
+cor(bwght$faminc,bwght$cigs)
+```
+
+```{r}
+reg<- lm(bwght~cigs+faminc, data = bwght)
+summary(reg)
+
+```
+
+Función de regresión poblacional (FRP)
+$$
+bwght=\ 116.97413-\ 0.46341 cigs+\ 0.09276 faminc+ u
+$$
+
+```{r}
+modelsummary(list("RLS"=reg), stars=T, output="kableExtra")
+```
+
+**Muestra**
+
+$$
+bwght_i=\ 116.97413-\ 0.46341 cigs_i+\ 0.09276 faminc_i+u
+$$
+
+$$
+\hat{bwght}_i=\ 116.97413-\ 0.46341 cigs_i+\ 0.09276 faminc_i
+$$
+
+$$
+R^2=0.030, n=1388
+$$
+
+```{r}
+reg1<- lm(bwght~cigs, data = bwght)
+summary(reg1)
+```
+
+**Función de regresión poblacional (FRP)**
+
+$$ bwght=\ 119.77190-\ 0.51377 cigs+ u $$
+
+```{r}
+modelsummary(list("RLS"=reg1), stars=T, output="kableExtra")
+```
+
+**Muestra**
+
+$$ bwght_i=\ 119.77190-\ 0.51377 cigs_i+u $$
+
+$$ \hat{bwght}_i=\ 119.77190-\ 0.51377 cigs_i$$
+
+$$ R^2=0.023, n=1388 $$
+
+Incluir el factor de los ingresos familiares no produce un cambio notable en los impactos del hábito de fumar durante el embarazo. Por lo tanto, se podría concluir que no existe una correlación entre el consumo de cigarrillos y el nivel de ingresos familiares, y que no se observa un efecto significativo entre estas variables que genere una diferencia relevante en el peso al nacer.
+
+# C3.2
+
+#### 1. Escriba los resultados en forma de ecuación.
+
+```{r}
+reg3<- lm(price~sqrft+bdrms, data = hprice1)
+summary(reg3)
+```
+
+#### $$ price=\ -19.31500+\ 0.12844 sqrft+\ 15.19819bdrms+ u $$
+
+#### 2. ¿Cual es el incremento en precio estimado para una casa con una habitación (bdrms) más, manteniendo constante la superficie en pies cuadrados (sqrft)?
+
+El precio aumenta \$15,19 dólares.
+
+#### 3. ¿Cual es el incremento en precio estimado para una casa con una habitación adicional de 140 pies cuadrados? Compare esto con su respuesta al inciso (ii).
+
+$$
+    price = -19.31500 + 0.12844(140) + 15.19819(1) 
+    $$
+
+$$price=
+    33.17979
+    $$
+
+El incremento en precio estimado para una casa con una habitación adicional de 140 pies cuadrados es de \$33.17422 dolares.
+
+#### 4. ¿Qué porcentaje de la variación en el precio se explica por la extensión en pies cuadrados y el número de habitaciones?
+
+```{r}
+resumen<-summary(reg3)
+resumen$adj.r.squared
+```
+
+$$ R^2=0.62$$
+
+Aproximadamente el 62,32% de la variación del precio se explica por la extensión en pies cuadrados y el número de habitaciones.
+
+#### 5) La primera casa en la muestra tiene sqrft 2,438 y bdrms 4. Determine el precio de venta estimado para esta casa con la línea de regresión de MCO.
+
+```{r}
+predict(reg3,data.frame(sqrft=2438,bdrms=4))
+```
+
+$$
+Price = 354.6052
+$$
+
+El precio estimado es de \$354.6052 dólares
+
+#### 6. El precio de venta de la primera casa en la muestra fue \$300,000 (así que price 300). Determine el residual para esta casa. ¿Sugiere esto que el comprador pagó de más o de menos por la casa?
+
+```{r}
+300-354.6052
+```
+
+El comprador pagó de menos de lo que se había estimado por la casa.
